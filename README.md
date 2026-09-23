@@ -12,8 +12,7 @@ A [Raycast](https://raycast.com) extension for macOS.
 - **Safe termination & post-exit verification.** Before sending `SIGTERM`, the extension verifies process identities against a fresh snapshot to ensure recycled PIDs are never terminated by mistake. Signals are delivered deepest-children-first to prevent respawning, and process exit is re-verified after signalling. If a process ignores `SIGTERM`, it suggests Force Quit.
 - **Force Quit with SIGKILL.** Force Quit sends `SIGKILL` directly across the process tree to immediately terminate stubborn or hanging apps.
 - **On-demand metric collection.** High-overhead two-frame network rate sampling (`nettop`, ~1s) only runs when viewing the **Network** category. Categories like **All**, **CPU**, **Memory**, **GUI**, and **Background** skip it completely for instantaneous (<100ms) listing and refreshes.
-- **简体中文界面。** 进程列表、操作、Toast、菜单栏和设置项均为中文。
-- **iStat-style menu bar.** Two extras (CPU and Memory) draw compact graphs in the macOS menu bar and refresh every 10 seconds (Raycast's fastest background interval). The Memory extra is a narrow memory-pressure pill; the CPU extra is a user (blue) + system (pink) histogram. Their menus show pressure, used memory, App / Wired / Compressed / Available, paging, swap, and the top apps by CPU or RAM. Quit / Force Quit sit one click behind a submenu, and each extra has its own switch (on by default). These commands skip `nettop` and port sampling so each refresh stays light.
+- **简体中文界面。** 进程列表、操作、Toast 和设置项均为中文；只注册一个主命令。
 
 ## Installation
 
@@ -47,8 +46,6 @@ Other scripts:
 | 显示 PID   | 复选框 | 关      | 在列表中显示进程 PID                     |
 | 显示路径   | 复选框 | 关      | 在列表中显示可执行路径                   |
 | 关闭窗口   | 复选框 | 关      | 结束进程后关闭 Raycast 窗口              |
-| CPU 菜单栏 | 复选框 | 开      | 在菜单栏显示 CPU 胶囊，关掉只隐藏图标    |
-| 内存菜单栏 | 复选框 | 开      | 在菜单栏显示内存压力胶囊，关掉只隐藏图标 |
 
 ## Usage
 
@@ -59,11 +56,7 @@ Other scripts:
 5. Use **强制结束** (`Cmd+Enter` or secondary action) to terminate with SIGKILL if an app hangs.
 6. Open **查看辅助进程** (`Cmd+Shift+H` or secondary action) to inspect or terminate individual child helpers.
 
-The **CPU 菜单栏** and **内存菜单栏** are two separate commands, kept enabled by default, and each has its own switch (default on) that hides only its menu bar item. The CPU command draws user (blue) + system (pink) bars, the memory command a narrow pressure pill (no bars while pressure is unknown); both update every 10 seconds. The CPU menu shows the user/system split, efficiency/performance cores, and the top apps by CPU; the Memory menu shows pressure, the memory breakdown, paging, swap, and the top apps by RAM. Open a submenu to Quit.
-
-Raycast's manifest has no field to keep a command enabled while hiding it from Root Search (`disabledByDefault: true` disables it instead of defaulting it on), so both menu bar commands can still appear in Root Search and closing a switch only removes the menu bar item. "Enabled by default" means Raycast does not disable these commands; whether macOS draws both extras immediately after the first import is not verified here — if a pill is missing, check the switch above and the command's enabled state in Raycast.
-
-Raycast does not allow 1-second menu bar polling. 10 seconds is the documented minimum for background refresh; opening the menu always fetches a fresh snapshot. Raycast menu popovers are native menus, so the large donut cards from iStat Menus become ring icons plus numbers rather than a custom chart window.
+导入导出与偏好设置从 **管理进程 → 设置与导入导出** 进入。为满足单入口要求，两个独立的 CPU/内存菜单栏命令不再注册。
 
 ## How this differs from Kill Process
 
