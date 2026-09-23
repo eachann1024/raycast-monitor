@@ -33,22 +33,6 @@
         "端口",
         "活动监视器"
       ]
-    },
-    {
-      "name": "menu-bar-cpu",
-      "title": "CPU 菜单栏",
-      "subtitle": "goose-monitor",
-      "description": "状态栏 CPU 竖胶囊，点开看用户/系统、能效/性能核心与 Top CPU",
-      "mode": "menu-bar",
-      "interval": "10s"
-    },
-    {
-      "name": "menu-bar-mem",
-      "title": "内存菜单栏",
-      "subtitle": "goose-monitor",
-      "description": "状态栏内存直方图，点开查看压力、分解与 Top 内存",
-      "mode": "menu-bar",
-      "interval": "10s"
     }
   ],
   "preferences": [
@@ -108,24 +92,6 @@
       "type": "checkbox",
       "required": false,
       "default": false
-    },
-    {
-      "name": "showCpuMenuBar",
-      "title": "菜单栏",
-      "label": "显示 CPU 菜单栏",
-      "description": "在 macOS 菜单栏显示 CPU 胶囊；只隐藏菜单栏图标，命令本身仍启用",
-      "type": "checkbox",
-      "required": false,
-      "default": true
-    },
-    {
-      "name": "showMemoryMenuBar",
-      "title": "",
-      "label": "显示内存菜单栏",
-      "description": "在 macOS 菜单栏显示内存压力胶囊；只隐藏菜单栏图标，命令本身仍启用",
-      "type": "checkbox",
-      "required": false,
-      "default": true
     }
   ],
   "dependencies": {
