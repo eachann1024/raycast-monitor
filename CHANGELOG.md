@@ -1,5 +1,10 @@
 # Process Monitor Changelog
 
+## [2026-09-23]
+
+- 新增中英文界面切换，以及设置的 JSON 导入、导出和共享文件同步。
+- 精简为单一进程管理命令，设置与数据互通从主命令进入。
+
 ## [Initial Version] - {PR_MERGE_DATE}
 
 - Search running apps by name, PID, or port and quit them
