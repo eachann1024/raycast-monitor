@@ -50,6 +50,14 @@
       ]
     },
     {
+      "name": "sharedSettingsFilePath",
+      "title": "Shared Settings JSON File",
+      "description": "Select an existing shared JSON file. Switch between this preference and an override in Settings; neither path is overwritten automatically.",
+      "type": "file",
+      "required": false,
+      "default": ""
+    },
+    {
       "name": "refreshDuration",
       "title": "Refresh Interval",
       "description": "How often to refresh the process list",
