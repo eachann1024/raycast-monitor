@@ -52,7 +52,8 @@ export const t = {
   newFileName: "New File Name",
   waitingShared: "Waiting to read shared file",
   noSharedPath: "No shared file path configured",
-  sharedUnavailable: "Shared file not read or unavailable; nothing was written. Create it explicitly or retry in Settings",
+  sharedUnavailable:
+    "Shared file not read or unavailable; nothing was written. Create it explicitly or retry in Settings",
   sharedSynced: "Shared settings synchronized",
   notOverwritten: "file was not overwritten",
   sharedNotSaved: "Shared Settings Not Saved",
@@ -278,7 +279,6 @@ export const zh: Messages = {
   killInspectFailed: "无法检查进程。",
 };
 
-
 const ROLE_TEXT: Record<string, (strings: Messages) => string> = {
   "Main Process": (strings) => strings.roleMain,
   GPU: (strings) => strings.roleGpu,
@@ -318,14 +318,14 @@ const TRANSFER_ERRORS: Record<string, string> = {
   "新建期间文件发生变化；未接受该文件为基线": "File changed during creation; it was not accepted as the baseline",
   "共享文件已被外部修改，已阻止覆盖；请先重新读取": "Shared file changed elsewhere; overwrite blocked. Reload it first",
   "写入期间共享文件发生变化，已阻止覆盖": "Shared file changed during writing; overwrite blocked",
-  "设置文件过大": "Settings file is too large",
-  "无效设置文件": "Invalid settings file",
-  "不支持的设置格式": "Unsupported settings format",
-  "无效排序设置": "Invalid sort setting",
-  "无效分类设置": "Invalid category setting",
+  设置文件过大: "Settings file is too large",
+  无效设置文件: "Invalid settings file",
+  不支持的设置格式: "Unsupported settings format",
+  无效排序设置: "Invalid sort setting",
+  无效分类设置: "Invalid category setting",
 };
 
 export function formatTransferError(error: unknown, strings: Messages = t): string {
   const message = error instanceof Error ? error.message : String(error);
-  return strings === zh ? message : TRANSFER_ERRORS[message] ?? message;
+  return strings === zh ? message : (TRANSFER_ERRORS[message] ?? message);
 }
