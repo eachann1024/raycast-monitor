@@ -12,7 +12,7 @@ A [Raycast](https://raycast.com) extension for macOS.
 - **Safe termination & post-exit verification.** Before sending `SIGTERM`, the extension verifies process identities against a fresh snapshot to ensure recycled PIDs are never terminated by mistake. Signals are delivered deepest-children-first to prevent respawning, and process exit is re-verified after signalling. If a process ignores `SIGTERM`, it suggests Force Quit.
 - **Force Quit with SIGKILL.** Force Quit sends `SIGKILL` directly across the process tree to immediately terminate stubborn or hanging apps.
 - **On-demand metric collection.** High-overhead two-frame network rate sampling (`nettop`, ~1s) only runs when viewing the **Network** category. Categories like **All**, **CPU**, **Memory**, **GUI**, and **Background** skip it completely for instantaneous (<100ms) listing and refreshes.
-- **简体中文界面。** 进程列表、操作、Toast 和设置项均为中文；只注册一个主命令。
+- **English by default.** The extension UI defaults to English. Choose **Chinese (Simplified)** under the **Interface Language** preference to switch languages; Store metadata remains in English.
 
 ## Installation
 
@@ -40,23 +40,25 @@ Other scripts:
 
 ## Preferences
 
-| 偏好       | 类型   | 默认    | 说明                                     |
-| ---------- | ------ | ------- | ---------------------------------------- |
-| 刷新       | 下拉   | 每 3 秒 | 关闭、每秒、每 2/3/5 秒                  |
-| 显示 PID   | 复选框 | 关      | 在列表中显示进程 PID                     |
-| 显示路径   | 复选框 | 关      | 在列表中显示可执行路径                   |
-| 关闭窗口   | 复选框 | 关      | 结束进程后关闭 Raycast 窗口              |
+| Preference                | Type     | Default       | Description                                                                 |
+| ------------------------- | -------- | ------------- | --------------------------------------------------------------------------- |
+| Interface Language       | Dropdown | English       | Choose English or Chinese (Simplified) for the extension UI.                |
+| Shared Settings JSON File | File     | Not set       | Optional shared settings file path. A separate override path can be chosen in Settings & Data Transfer. |
+| Refresh Interval         | Dropdown | Every 3 seconds | Refresh the process list every 1, 2, 3, or 5 seconds, or turn refresh off.  |
+| Show PID                 | Checkbox | Off           | Show each process ID in the list.                                           |
+| Show Path                | Checkbox | Off           | Show each executable path in the list.                                      |
+| Close Window             | Checkbox | Off           | Close the Raycast window after quitting a process.                          |
 
 ## Usage
 
-1. Run **管理进程** from Raycast.
+1. Run **Manage Processes** from Raycast (the extension's single command).
 2. Filter by app name, PID, or port number (`8101` or `:8101`).
-3. Switch categories via the dropdown (**全部**, **界面**, **CPU**, **内存**, **网络**, **后台**).
-4. Press **Enter** to quit the selected app (SIGTERM with exit verification).
-5. Use **强制结束** (`Cmd+Enter` or secondary action) to terminate with SIGKILL if an app hangs.
-6. Open **查看辅助进程** (`Cmd+Shift+H` or secondary action) to inspect or terminate individual child helpers.
+3. Switch categories via the dropdown (**All**, **Apps**, **CPU**, **Memory**, **Network**, **Background**).
+4. Press **Enter** to **Quit** the selected app (SIGTERM with exit verification).
+5. Use **Force Quit** (`Cmd+Enter` or the secondary action) to send SIGKILL if an app hangs.
+6. Open **Show Helpers** (`Cmd+Shift+H` or the secondary action) to inspect or terminate individual child helpers.
 
-导入导出与偏好设置从 **管理进程 → 设置与导入导出** 进入。为满足单入口要求，两个独立的 CPU/内存菜单栏命令不再注册。
+Open **Settings & Data Transfer** from the process list or an action panel to import/export settings and configure shared settings. The CPU and Memory menu bar commands are not registered; **Manage Processes** is the only command.
 
 ## How this differs from Kill Process
 
