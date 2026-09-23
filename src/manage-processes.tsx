@@ -287,7 +287,7 @@ export default function ManageProcesses() {
         </List.Dropdown>
       }
     >
-      {!isLoading && <List.EmptyView title={t.noProcesses} description={t.noProcessesHint} />}
+      {!isLoading && rows.length === 0 && <List.Item title={t.noProcesses} subtitle={t.noProcessesHint} icon={Icon.Info} />}
       {rows.map((row) => (
         <List.Item
           key={row.id}
