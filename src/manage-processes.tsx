@@ -11,6 +11,7 @@ import {
   closeMainWindow,
   environment,
   getPreferenceValues,
+  openExtensionPreferences,
   showToast,
   useNavigation,
 } from "@raycast/api";
@@ -337,9 +338,9 @@ export default function ManageProcesses() {
             <ActionPanel>
               {row.protected ? (
                 <>
-                  <Action.CopyToClipboard title={t.copyPid} content={`${row.pid}`} />
+                  <Action.CopyToClipboard title={t.copyPid} content={`${row.pid}`} shortcut={Keyboard.Shortcut.Common.Copy} />
                   {row.path ? <Action.ShowInFinder title={t.showInFinder} path={row.path} /> : null}
-                  {row.path ? <Action.CopyToClipboard title={t.copyPath} content={row.path} /> : null}
+                  {row.path ? <Action.CopyToClipboard title={t.copyPath} content={row.path} shortcut={Keyboard.Shortcut.Common.CopyPath} /> : null}
                 </>
               ) : (
                 <>
@@ -347,6 +348,7 @@ export default function ManageProcesses() {
                   <Action
                     title={t.forceQuit}
                     icon={Icon.XMarkCircleFilled}
+                    shortcut={Keyboard.Shortcut.Common.Remove}
                     style={Action.Style.Destructive}
                     onAction={() => void quit(row, true)}
                   />
@@ -357,12 +359,13 @@ export default function ManageProcesses() {
                       target={<Helpers row={row} quit={quit} t={t} />}
                     />
                   ) : null}
-                  <Action.CopyToClipboard title={t.copyPid} content={`${row.pid}`} />
-                  {row.path ? <Action.CopyToClipboard title={t.copyPath} content={row.path} /> : null}
+                  <Action.CopyToClipboard title={t.copyPid} content={`${row.pid}`} shortcut={Keyboard.Shortcut.Common.Copy} />
+                  {row.path ? <Action.CopyToClipboard title={t.copyPath} content={row.path} shortcut={Keyboard.Shortcut.Common.CopyPath} /> : null}
                   {row.path ? <Action.ShowInFinder title={t.showInFinder} path={row.path} /> : null}
                 </>
               )}
               <Action title={t.openActivityMonitor} icon={Icon.Monitor} onAction={() => void openActivityMonitor()} />
+              <Action title={t.openPreferences} icon={Icon.Gear} onAction={openExtensionPreferences} />
               <ActionPanel.Section>
                 {[...sortsOf(t), ...(isNet ? netSortsOf(t) : [])].map((option) => (
                   <Action
@@ -388,22 +391,11 @@ export default function ManageProcesses() {
                   shortcut={Keyboard.Shortcut.Common.Refresh}
                   onAction={() => void refresh()}
                 />
-                <Action.Push title={t.settingsAndTransfer} icon={Icon.Gear} target={settingsView} />
               </ActionPanel.Section>
             </ActionPanel>
           }
         />
       ))}
-      <List.Item
-        id="settings"
-        title={t.settingsAndTransfer}
-        icon={Icon.Gear}
-        actions={
-          <ActionPanel>
-            <Action.Push title={t.settingsAndTransfer} icon={Icon.Gear} target={settingsView} />
-          </ActionPanel>
-        }
-      />
     </List>
   );
 }

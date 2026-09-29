@@ -28,6 +28,14 @@
         "activity",
         "task"
       ]
+    },
+    {
+      "name": "menu-bar-cpu",
+      "title": "CPU 菜单栏",
+      "subtitle": "Goose Monitor",
+      "description": "显示 CPU 使用情况和占用最高的应用",
+      "mode": "menu-bar",
+      "interval": "10s"
     }
   ],
   "preferences": [
