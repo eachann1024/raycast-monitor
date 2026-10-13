@@ -1,0 +1,39 @@
+{
+  "name": "Goose Monitor",
+  "branch": "main",
+  "inputs": [
+    "src",
+    "assets",
+    "package.json",
+    "package-lock.json",
+    "tsconfig.json",
+    ".github/scripts/stable-release.py",
+    ".github/stable-release.json",
+    ".github/workflows/daily-stable.yml"
+  ],
+  "assets": [
+    {
+      "name": "raycast-monitor.zip",
+      "parts": [
+        {
+          "path": "dist-release",
+          "prefix": "compiled"
+        },
+        {
+          "tracked": [
+            "src",
+            "assets",
+            "package.json",
+            "package-lock.json",
+            "tsconfig.json",
+            "README.md",
+            "LICENSE",
+            "CHANGELOG.md"
+          ],
+          "prefix": "source"
+        }
+      ]
+    }
+  ],
+  "notes": "This ZIP contains the compiled Raycast extension in compiled/ and its source in source/. On macOS with Raycast and Node.js 22, extract the archive, run npm ci in source/, then use Raycast Import Extension with that source/ directory or run npm run dev. The compiled folder is provided as a build artifact, not a double-click installer. This GitHub Release does not publish to the Raycast Store."
+}
