@@ -8,6 +8,7 @@ import {
   openExtensionPreferences,
   useNavigation,
 } from "@raycast/api";
+import type { ReactNode } from "react";
 import { GENERIC_APP_ICON } from "../lib/app-icon";
 import type { SortDir, SortKey } from "../lib/categories";
 import { cpuExact, fmtCpu, fmtMem, fmtPorts, fmtRate, memExact } from "../lib/format";
@@ -29,6 +30,7 @@ type Props = {
   openActivityMonitor: () => Promise<void>;
   refresh: () => Promise<void>;
   onSortChange: (option: SortOption) => void;
+  settingsView: ReactNode;
 };
 
 const sortsOf = (t: Messages): SortOption[] => [
@@ -54,6 +56,7 @@ export function ProcessRow({
   openActivityMonitor,
   refresh,
   onSortChange,
+  settingsView,
 }: Props) {
   return (
     <List.Item
@@ -111,6 +114,7 @@ export function ProcessRow({
           )}
           <Action title={t.openActivityMonitor} icon={Icon.Monitor} onAction={() => void openActivityMonitor()} />
           <Action title={t.openPreferences} icon={Icon.Gear} onAction={openExtensionPreferences} />
+          <Action.Push title={t.settingsTransfer} icon={Icon.Gear} target={settingsView} />
           <ActionPanel.Section>
             {[...sortsOf(t), ...(isNet ? netSortsOf(t) : [])].map((option) => (
               <Action

@@ -1,4 +1,6 @@
 import {
+  Action,
+  ActionPanel,
   Icon,
   LaunchType,
   List,
@@ -203,7 +205,16 @@ export default function ManageProcesses() {
       }
     >
       {!isLoading && rows.length === 0 && (
-        <List.Item title={t.noProcesses} subtitle={t.noProcessesHint} icon={Icon.Info} />
+        <List.Item
+          title={t.noProcesses}
+          subtitle={t.noProcessesHint}
+          icon={Icon.Info}
+          actions={
+            <ActionPanel>
+              <Action.Push title={t.settingsTransfer} icon={Icon.Gear} target={settingsView} />
+            </ActionPanel>
+          }
+        />
       )}
       {rows.map((row) => (
         <ProcessRow
@@ -216,6 +227,7 @@ export default function ManageProcesses() {
           quit={quit}
           openActivityMonitor={openActivityMonitor}
           refresh={refresh}
+          settingsView={settingsView}
           onSortChange={(option) => {
             void (isNet ? setStoredNetworkSort(option) : setStoredSort(option));
             const next = {
