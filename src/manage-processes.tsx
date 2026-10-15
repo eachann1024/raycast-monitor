@@ -177,7 +177,6 @@ export default function ManageProcesses() {
 
   return (
     <List
-      navigationTitle={t.processes}
       isLoading={isLoading && rows.length === 0}
       selectedItemId={selected}
       onSelectionChange={(id) => setSelectedId(id ?? undefined)}

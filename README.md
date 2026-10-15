@@ -50,14 +50,14 @@ Other scripts:
 
 ## Usage
 
-1. Run **Manage Processes** from Raycast.
+1. Run **Goose Monitor** from Raycast.
 2. Filter by app name, PID, or port number (`8101` or `:8101`).
 3. Switch categories via the dropdown (**All**, **Apps**, **CPU**, **Memory**, **Network**, **Background**).
 4. Press **Enter** to **Quit** the selected app (SIGTERM with exit verification).
 5. Use **Force Quit** (`Cmd+Enter` or the secondary action) to send SIGKILL if an app hangs.
 6. Open **Show Helpers** (`Cmd+Shift+H` or the secondary action) to inspect or terminate individual child helpers.
 
-Open **Settings & Data Transfer** from the process list or an action panel to import/export settings and configure shared settings. Run **CPU 菜单栏** to display CPU usage and the busiest apps in the menu bar. The extension registers **Manage Processes** and this CPU menu bar command.
+Open **Settings & Data Transfer** from the process list or an action panel to import/export settings and configure shared settings. Run **CPU 菜单栏** to display CPU usage and the busiest apps in the menu bar. The extension registers **Goose Monitor** and this CPU menu bar command.
 
 ## How this differs from Kill Process
 
