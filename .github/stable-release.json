@@ -1,10 +1,12 @@
 {
   "name": "Goose Monitor",
   "branch": "main",
+  "version_file": "VERSION",
   "inputs": [
     "src",
     "assets",
     "package.json",
+    "VERSION",
     "package-lock.json",
     "tsconfig.json",
     ".github/scripts/stable-release.py",
