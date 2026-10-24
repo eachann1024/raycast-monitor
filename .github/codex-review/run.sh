@@ -80,23 +80,4 @@ env -u GH_TOKEN -u GITHUB_TOKEN -u CODEX_AUTH_JSON CODEX_HOME="$review_codex_hom
   -o "$out" \
   - < "$prompt_file" >&2
 
-python3 - "$out" <<'PARSE'
-import json, sys
-data = json.load(open(sys.argv[1], encoding="utf-8"))
-needed = {"merge_recommendation", "risk_level", "security_concerns", "key_issues_to_review"}
-if not isinstance(data, dict) or set(data) != needed:
-    raise SystemExit("审核结果字段不合法")
-if data["merge_recommendation"] not in {"safe_to_merge", "merge_with_caution", "changes_required"}:
-    raise SystemExit("审核建议不合法")
-if data["risk_level"] not in {"low", "medium", "high"} or not isinstance(data["security_concerns"], str):
-    raise SystemExit("审核风险或安全字段不合法")
-issues = data["key_issues_to_review"]
-keys = {"relevant_file", "issue_header", "issue_content"}
-if not isinstance(issues, list) or len(issues) > 3 or any(
-    not isinstance(issue, dict) or set(issue) != keys or any(not isinstance(value, str) for value in issue.values())
-    for issue in issues
-):
-    raise SystemExit("审核问题字段不合法")
-json.dump(data, sys.stdout, ensure_ascii=False)
-print()
-PARSE
+python3 .github/codex-review/parse_review.py "$out"
