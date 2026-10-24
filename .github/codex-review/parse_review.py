@@ -6,7 +6,6 @@ object. json.load then fails with "Extra data". Job outputs are not used.
 """
 
 import json
-import re
 import sys
 
 NEEDED = {"merge_recommendation", "risk_level", "security_concerns", "key_issues_to_review"}
@@ -17,61 +16,6 @@ RISKS = {"low", "medium", "high"}
 
 class ReviewParseError(Exception):
     pass
-
-
-_JSON_SECRET_KEYS = (
-    r"token|password|secret|access_token|refresh_token|api_key|id_token|authorization|credential"
-)
-
-
-def safe_excerpt(text, limit=180):
-    """Short single-line excerpt. Credential values are removed before truncation."""
-    text = text.replace("\x00", "")
-    text = re.sub(
-        r"(?i)-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY-----",
-        "<redacted>",
-        text,
-    )
-    # Quoted JSON credential fields: replace the whole value, including spaces.
-    text = re.sub(
-        rf'(?i)"({_JSON_SECRET_KEYS})"\s*:\s*"(?:\\.|[^"\\])*"',
-        r'"\1":"<redacted>"',
-        text,
-    )
-    text = re.sub(
-        rf"(?i)'({_JSON_SECRET_KEYS})'\s*:\s*'(?:\\.|[^'\\])*'",
-        r"'\1':'<redacted>'",
-        text,
-    )
-    # Authorization: Bearer <entire token>, including the token after Bearer.
-    text = re.sub(
-        r"(?i)\bauthorization\s*[:=]\s*bearer\s+\S+",
-        "authorization: Bearer <redacted>",
-        text,
-    )
-    text = re.sub(r"(?i)\bbearer\s+\S+", "Bearer <redacted>", text)
-    text = re.sub(
-        r"(?i)\b(authorization|api[_-]?key|token|secret|password|credential|CODEX_AUTH_JSON)"
-        r"\s*[:=]\s*(?:bearer\s+)?\S+",
-        r"\1=<redacted>",
-        text,
-    )
-    # JWT-looking strings (header.payload.signature, or a long eyJ… blob).
-    text = re.sub(
-        r"\beyJ[A-Za-z0-9_\-]{8,}={0,2}(?:\.[A-Za-z0-9_\-]+={0,2}){0,2}",
-        "<redacted>",
-        text,
-    )
-    text = re.sub(
-        r"(?i)\b(sk|ghp|gho|ghu|ghs|github_pat|xox[baprs])[A-Za-z0-9_\-\.]{8,}",
-        "<redacted>",
-        text,
-    )
-    text = re.sub(r"[A-Za-z0-9+/]{40,}={0,2}", "<redacted>", text)
-    text = " ".join(text.split())
-    if len(text) > limit:
-        text = text[: limit - 1] + "…"
-    return text or "(空)"
 
 
 def iter_json_values(text):
@@ -91,25 +35,43 @@ def iter_json_values(text):
         idx = max(end, start + 1)
 
 
+def line_count(text):
+    if text == "":
+        return 0
+    return text.count("\n") + (0 if text.endswith("\n") else 1)
+
+
+def parse_failure(text, object_count, missing_field):
+    """Metadata only. Never include any of the review text."""
+    return (
+        "审核结果无法解析，已省略原文。"
+        f"字节数={len(text.encode('utf-8'))}，行数={line_count(text)}，"
+        f"JSON 对象数={object_count}，缺少字段={missing_field}。"
+    )
+
+
 def parse_review(text):
     """Return the last complete object that has merge_recommendation."""
-    if text.startswith("\ufeff"):
-        text = text[1:]
+    body = text[1:] if text.startswith("\ufeff") else text
+    object_count = 0
     chosen = None
-    for value in iter_json_values(text):
-        if isinstance(value, dict) and "merge_recommendation" in value:
+    for value in iter_json_values(body):
+        if not isinstance(value, dict):
+            continue
+        object_count += 1
+        if "merge_recommendation" in value:
             chosen = value
     if chosen is None:
-        raise ReviewParseError(
-            "审核结果里没有找到带 merge_recommendation 的完整 JSON 对象"
-            "（输出里可能有多段 JSON 或尾部杂讯）。摘录：" + safe_excerpt(text)
-        )
+        raise ReviewParseError(parse_failure(text, object_count, "merge_recommendation"))
     return chosen
 
 
 def validate_review(data):
     if not isinstance(data, dict) or set(data) != NEEDED:
-        raise ReviewParseError("审核结果字段不合法")
+        missing = sorted(NEEDED - set(data)) if isinstance(data, dict) else sorted(NEEDED)
+        extra = len(set(data) - NEEDED) if isinstance(data, dict) else 0
+        missing_text = ",".join(missing) if missing else "(无)"
+        raise ReviewParseError(f"审核结果字段不合法。缺少字段={missing_text}，多余字段数={extra}。")
     if data["merge_recommendation"] not in RECOMMENDATIONS:
         raise ReviewParseError("审核建议不合法")
     if data["risk_level"] not in RISKS or not isinstance(data["security_concerns"], str):
