@@ -36,6 +36,7 @@ env:
   # SECRET_PATHS 按路径段匹配，不只看文件名：secrets / credentials = 某一整段恰好等于该名字
   # （因此 .github/secrets/production.json 会命中）；以 * 结尾=该段前缀（.env*、id_rsa*）；
   # 以 * 开头=该段后缀（*.pem、*.key、*.p12）。这与上面 PROTECTED_PATHS 的文件名前缀规则不同。
+  # 密钥判断同时看 filename 和 previous_filename：改名进或改名出密钥路径都算，删除的文件也算。
   # 仓库有其他部署配置（如自定义 deploy 脚本目录）就追加到这里。
   PROTECTED_PATHS: ".github/,.pr_agent.toml,.gemini/,.coderabbit.yaml,.greptile/,.env,secrets,credentials,*.pem,*.key,*.p12,id_rsa,deploy/,vercel.json,netlify.toml,fly.toml,wrangler.toml,render.yaml,Dockerfile,docker-compose,compose.yaml,compose.yml,Procfile"
   SECRET_PATHS: ".env*,secrets,credentials,*.pem,*.key,*.p12,id_rsa*"
@@ -346,7 +347,8 @@ jobs:
 
           # 2) 密钥路径始终转人工。其他受保护路径：主人同仓库且 safe_to_merge 放行，其余转人工。
           files = json.loads(gh("api", "--paginate", "--slurp", f"repos/{repo}/pulls/{pr}/files?per_page=100"))
-          names = [f["filename"] for page in files for f in page]
+          entries = [f for page in files for f in page]
+          names = [f["filename"] for f in entries if f.get("filename")]
           def matches(n, p):
               base = n.rsplit("/", 1)[-1]
               if p.endswith("/"):
@@ -366,7 +368,18 @@ jobs:
               return pattern in parts
           secret_patterns = [p.strip() for p in env["SECRET_PATHS"].split(",") if p.strip()]
           prot = [p.strip() for p in env["PROTECTED_PATHS"].split(",") if p.strip()]
-          secret_hit = [n for n in names if any(secret_match(n, p) for p in secret_patterns)]
+          def is_secret(path):
+              return bool(path) and any(secret_match(path, p) for p in secret_patterns)
+          secret_hit = []
+          seen_secret = set()
+          for entry in entries:
+              # 删除文件只有 filename（被删路径）。改名同时看新旧路径，进或出都拦截。
+              for key in ("filename", "previous_filename"):
+                  path = entry.get(key) or ""
+                  if path in seen_secret or not is_secret(path):
+                      continue
+                  seen_secret.add(path)
+                  secret_hit.append(path)
           secret_names = set(secret_hit)
           prot_hit = [n for n in names if n not in secret_names and any(matches(n, p) for p in prot)]
           if secret_hit:
